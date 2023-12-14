@@ -8,7 +8,8 @@ skip = 0
 face_data = []
 dataset_path = "./face_dataset/"
 
-file_name = input("Enter the name of person : ")
+file_name = input("name: ")
+face_data_length = 3
 
 while True:
     ret, frame = cap.read()
@@ -27,8 +28,8 @@ while True:
     faces = sorted(faces, key=lambda x: x[2] * x[3], reverse=True)
 
     skip += 1
-
-    for face in faces[:1]:
+    face = faces[0]
+    if len(face) > 0:
         x, y, w, h = face
 
         offset = 5
@@ -39,14 +40,12 @@ while True:
             face_data.append(face_selection)
             print(len(face_data))
 
-        cv2.imshow(str(k), face_selection)
-        k += 1
-
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
     cv2.imshow("faces", frame)
 
-    key_pressed = cv2.waitKey(1) & 0xFF
+    key_pressed = cv2.waitKey(1)
+
     if key_pressed == ord('q'):
         break
 

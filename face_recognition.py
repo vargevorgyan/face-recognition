@@ -45,8 +45,6 @@ for fx in os.listdir(dataset_path):
 
 face_dataset = np.concatenate(face_data, axis=0)
 face_labels = np.concatenate(labels, axis=0).reshape((-1, 1))
-print(face_labels.shape)
-print(face_dataset.shape)
 
 train_set = np.concatenate((face_dataset, face_labels), axis=1)
 
@@ -56,29 +54,26 @@ while True:
     ret, frame = cap.read()
     if not ret:
         continue
-    # Convert frame to grayscale
+
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    # Detect multi faces in the image
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
     for face in faces:
         x, y, w, h = face
 
-        # Get the face ROI
         offset = 5
         face_section = frame[y - offset:y + h + offset, x - offset:x + w + offset]
         face_section = cv2.resize(face_section, (100, 100))
 
         out = knn(train_set, face_section.flatten())
 
-        # Draw rectangle in the original image
         cv2.putText(frame, names[int(out)], (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
         cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 255, 255), 2)
 
     cv2.imshow("Faces", frame)
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(1) == ord('q'):
         break
 
 cap.release()
